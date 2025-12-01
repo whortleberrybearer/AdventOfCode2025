@@ -32,7 +32,7 @@ foreach (var turn in input)
             continue;
         }
 
-        while (position <= 0)
+        while (position < 0)
         {
             position += 100;
 
