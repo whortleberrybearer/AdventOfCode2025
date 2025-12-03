@@ -29,10 +29,13 @@ foreach (var range in input)
     {
         var duplicate = long.Parse($"{halfRangeStart}{halfRangeStart}");
 
-        if ((duplicate <= rangeEnd) && (duplicate >= rangeStart))
+        if (duplicate <= rangeEnd)
         {
-            Console.WriteLine($"Invalid: {duplicate}");
-            result += duplicate;
+            if (duplicate >= rangeStart)
+            {
+                Console.WriteLine($"Invalid: {duplicate}");
+                result += duplicate;
+            }
 
             halfRangeStart++;
         }
@@ -44,3 +47,6 @@ foreach (var range in input)
 }
 
 Console.WriteLine(result);
+
+// 24328657119 = Too low
+// 30599400849
