@@ -47,6 +47,3 @@ foreach (var range in input)
 }
 
 Console.WriteLine(result);
-
-// 24328657119 = Too low
-// 30599400849
