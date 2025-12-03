@@ -6,31 +6,29 @@ foreach (var bank in input)
     Console.WriteLine(bank);
 
     var barreries = bank.Select(b => int.Parse(b.ToString())).Reverse().ToArray();
-    var largestIndex1 = 0;
-    var largestIndex2 = 0;
-    var largestValue1 = 0;
-    var largestValue2 = 0;
 
-    for (var i = 1; i < barreries.Length; i++)
-    {
-        if (barreries[i] >= largestValue1)
-        {
-            largestIndex1 = i;
-            largestValue1 = barreries[i];
-        }
-    }
-
-    for (var i = 0; i < largestIndex1; i++)
-    {
-        if (barreries[i] >= largestValue2)
-        {
-            largestIndex2 = i;
-            largestValue2 = barreries[i];
-        }
-    }
+    var (largestValue1, largestIndex1) = FindLargestValue(barreries, 1, barreries.Length);
+    var (largestValue2, largestIndex2) = FindLargestValue(barreries, 0, largestIndex1);
 
     Console.WriteLine($"Batteries: {largestValue1}{largestValue2}");
     result += (largestValue1 * 10) + largestValue2;
 }
 
 Console.WriteLine(result);
+
+static (int value, int index) FindLargestValue(int[] barreries, int startIndex, int endIndex)
+{
+    var index = 0;
+    var value = 0;
+
+    for (var i = startIndex; i < endIndex; i++)
+    {
+        if (barreries[i] >= value)
+        {
+            index = i;
+            value = barreries[i];
+        }
+    }
+
+    return (value, index);
+}
