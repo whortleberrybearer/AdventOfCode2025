@@ -9,7 +9,7 @@ foreach (var bank in input)
     var endIndex = barreries.Length;
     var batteriesString = string.Empty;
 
-    for (var i = 1; i >= 0; i--)
+    for (var i = 11; i >= 0; i--)
     {
         var (largestValue, largestIndex) = FindLargestValue(barreries, i, endIndex);
         endIndex = largestIndex;
