@@ -8,7 +8,7 @@ var operators = input.Last().Split(" ", StringSplitOptions.RemoveEmptyEntries).T
 
 for (var col = 0; col < operators.Length; col++)
 {
-    var numbers = grid.Where(r => col < r.Length).Select(r => r[col]).ToArray();
+    var numbers = grid.Select(r => r[col]).ToArray();
 
     if (operators[col] == "+")
     {
