@@ -5,50 +5,47 @@ var result = 0L;
 var grid = input.Select(i => i.ToCharArray()).ToArray();
 
 var startPoisition = input.First().IndexOf('S');
-var beams = new List<(int, int)>() { (0, startPoisition) };
+var beams = new Dictionary<(int, int), long>() { { (0, startPoisition), 1 } };
 
 while (beams.Count > 0)
 {
-    var newBeams = new List<(int, int)>();
+    var newBeams = new Dictionary<(int, int), long>();
+
     foreach (var beam in beams)
     {
-        if (beam.Item1 >= (grid.Length - 1))
+        if (beam.Key.Item1 >= (grid.Length - 1))
         {
-            // Reached the end;
+            result += beam.Value;
+
             continue;
         }
 
-        if (grid[beam.Item1 + 1][beam.Item2] == '.')
+        if (newBeams.TryGetValue((beam.Key.Item1 + 1, beam.Key.Item2), out var count))
         {
-            grid[beam.Item1 + 1][beam.Item2] = '|';
-
-            newBeams.Add((beam.Item1 + 1, beam.Item2));
+            newBeams[(beam.Key.Item1 + 1, beam.Key.Item2)] = count + beam.Value;
         }
-        else if (grid[beam.Item1 + 1][beam.Item2] == '^')
+        else if (grid[beam.Key.Item1 + 1][beam.Key.Item2] == '.')
         {
-            var split = false;
-
-            if (grid[beam.Item1 + 1][beam.Item2 - 1] == '.')
+            newBeams.Add((beam.Key.Item1 + 1, beam.Key.Item2), beam.Value);
+        }
+        else if (grid[beam.Key.Item1 + 1][beam.Key.Item2] == '^')
+        {
+            if (newBeams.TryGetValue((beam.Key.Item1 + 1, beam.Key.Item2 - 1), out var count1))
             {
-                grid[beam.Item1 + 1][beam.Item2 - 1] = '|';
-
-                newBeams.Add((beam.Item1 + 1, beam.Item2 - 1));
-                
-                split = true;
+                newBeams[(beam.Key.Item1 + 1, beam.Key.Item2 - 1)] = count1 + beam.Value;
+            }
+            else
+            {
+                newBeams.Add((beam.Key.Item1 + 1, beam.Key.Item2 - 1), beam.Value);
             }
 
-            if (grid[beam.Item1 + 1][beam.Item2 + 1] == '.')
+            if (newBeams.TryGetValue((beam.Key.Item1 + 1, beam.Key.Item2 + 1), out var count2))
             {
-                grid[beam.Item1 + 1][beam.Item2 + 1] = '|';
-
-                newBeams.Add((beam.Item1 + 1, beam.Item2 + 1));
-
-                split = true;
+                newBeams[(beam.Key.Item1 + 1, beam.Key.Item2 + 1)] = count2 + beam.Value;
             }
-
-            if (split)
+            else
             {
-                result++;
+                newBeams.Add((beam.Key.Item1 + 1, beam.Key.Item2 + 1), beam.Value);
             }
         }
     }
