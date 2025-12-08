@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 var input = File.ReadAllLines("Input.txt");
 
@@ -6,10 +8,11 @@ var result = 0L;
 
 var coordinates = input.Select(i => i.Split(',', StringSplitOptions.RemoveEmptyEntries).Select(i => long.Parse(i)).ToArray()).ToArray();
 var distances = new List<(string, double)>();
+var distancesDictionary = new Dictionary<string, (string, double)[]>();
 
 for (var i = 0; i < coordinates.Length; i++)
 {
-    var shortest = ("", double.MaxValue);
+    var linkLengths = new List<(string, double)>();
 
     for (var j = 0; j < coordinates.Length; j++)
     {
@@ -26,61 +29,48 @@ for (var i = 0; i < coordinates.Length; i++)
         //}
 
         distances.Add(($"{string.Join(',', coordinates[i])}-{string.Join(',', coordinates[j])}", distance));
+        linkLengths.Add((string.Join(',', coordinates[j]), distance));
     }
 
-    //distances.Add(shortest);
+    distancesDictionary.Add(string.Join(',', coordinates[i]), linkLengths.OrderBy(l => l.Item2).ToArray());
 }
 
 distances = distances.OrderBy(d => d.Item2).ToList();
 
-var circuits = new List<List<string>>();
+var circuits = input.Select(i => new List<string>() { i }).ToList();
 var connections = 0;
 
-while (connections < 1000)
+foreach (var distance in distances)
 {
     Console.WriteLine($"Connections: {connections}");
 
-    var junctionBoxes = distances.First().Item1.Split('-');
-    var circuit = circuits.FirstOrDefault(c => c.Contains(junctionBoxes[0]));
+    var junctionBoxes = distance.Item1.Split('-');
 
-    if (circuit is null)
+    var circuit1 = circuits.FirstOrDefault(c => c.Contains(junctionBoxes[0]));
+    var circuit2 = circuits.FirstOrDefault(c => c.Contains(junctionBoxes[1]));
+
+    if (circuit1 == circuit2)
     {
-        circuit = circuits.FirstOrDefault(c => c.Contains(junctionBoxes[1]));
+        continue;
     }
-
-    var connection = false;
-
-    if (circuit is null)
+    else if (circuit1 is not null && circuit2 is not null)
     {
-        circuits.Add(new List<string>(junctionBoxes));
-        connection = true;
-    }
-    else
-    {
-        if (!circuit.Contains(junctionBoxes[0]))
-        {
-            circuit.Add(junctionBoxes[0]);
-            connection = true;
-        }
+        // Link the circuits
+        circuit1.AddRange(circuit2);
+        circuits.Remove(circuit2);
 
-        if (!circuit.Contains(junctionBoxes[1]))
-        {
-            circuit.Add(junctionBoxes[1]);
-            connection = true;
-        }
-    }
-
-    if (connection)
-    {
         connections++;
+
+        if (connections == 9)
+        {
+            break;
+        }
     }
 
-    distances.Remove(distances.First());
-
-    foreach (var additionalDelete in distances.Where(d => d.Item1.StartsWith(junctionBoxes[1])).ToArray())
-    {
-        distances.Remove(additionalDelete);
-    }
+    //foreach (var additionalDelete in distancesDictionary[junctionBoxes[1]].ToArray())
+    //{
+    //    distances.Remove(($"{}-{}", additionalDelete);
+    //}
 }
 
 var top3 = circuits.OrderByDescending(c => c.Count).Take(3).ToArray();
@@ -90,3 +80,4 @@ result = top3[0].Count * top3[1].Count * top3[2].Count;
 Console.WriteLine(result);
 
 // 2145 = too low
+// 2688 = too low
