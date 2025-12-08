@@ -4,7 +4,7 @@ var input = File.ReadAllLines("Input.txt");
 
 var result = 0L;
 
-var coordinates = input.Select(i => i.Split(',', StringSplitOptions.RemoveEmptyEntries).Select(i => int.Parse(i)).ToArray()).ToArray();
+var coordinates = input.Select(i => i.Split(',', StringSplitOptions.RemoveEmptyEntries).Select(i => long.Parse(i)).ToArray()).ToArray();
 var distances = new List<(string, double)>();
 
 for (var i = 0; i < coordinates.Length; i++)
@@ -36,8 +36,10 @@ distances = distances.OrderBy(d => d.Item2).ToList();
 var circuits = new List<List<string>>();
 var connections = 0;
 
-while (connections < 10)
+while (connections < 1000)
 {
+    Console.WriteLine($"Connections: {connections}");
+
     var junctionBoxes = distances.First().Item1.Split('-');
     var circuit = circuits.FirstOrDefault(c => c.Contains(junctionBoxes[0]));
 
@@ -75,11 +77,9 @@ while (connections < 10)
 
     distances.Remove(distances.First());
 
-    var x = distances.FirstOrDefault(d => d.Item1.StartsWith(junctionBoxes[1]));
-
-    if (x != default)
+    foreach (var additionalDelete in distances.Where(d => d.Item1.StartsWith(junctionBoxes[1])).ToArray())
     {
-        distances.Remove(x);
+        distances.Remove(additionalDelete);
     }
 }
 
@@ -88,3 +88,5 @@ var top3 = circuits.OrderByDescending(c => c.Count).Take(3).ToArray();
 result = top3[0].Count * top3[1].Count * top3[2].Count;
 
 Console.WriteLine(result);
+
+// 2145 = too low
