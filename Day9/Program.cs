@@ -2,7 +2,7 @@
 
 var result = 0L;
 
-var coordinates = input.Select(i => i.Split(',', StringSplitOptions.RemoveEmptyEntries).Select(i => int.Parse(i)).ToArray()).ToArray();
+var coordinates = input.Select(i => i.Split(',', StringSplitOptions.RemoveEmptyEntries).Select(i => long.Parse(i)).ToArray()).ToArray();
 
 var maxX = coordinates.Max(x => x[0]) + 3;
 var maxY = coordinates.Max(x => x[1]) + 3;
@@ -82,10 +82,72 @@ for (var i = 0; i < coordinates.Length; i++)
             continue;
         }
 
+        var area = (Math.Abs(coordinates[j][0] - coordinates[i][0]) + 1) * (Math.Abs(coordinates[j][1] - coordinates[i][1]) + 1);
+
+        areas.Add(($"{string.Join(',', coordinates[i])}-{string.Join(',', coordinates[j])}", area));
+    }
+}
+
+areas = areas.OrderByDescending(d => d.Item2).ToList();
+
+foreach (var area in areas)
+{
+    var coords = area.Item1.Split('-').Select(a => a.Split(',').Select(c => long.Parse(c)).ToArray()).ToArray();
+
+    var startX = Math.Min(coords[0][0], coords[1][0]);
+    var endX = Math.Max(coords[0][0], coords[1][0]);
+    var startY = Math.Min(coords[0][1], coords[1][1]);
+    var endY = Math.Max(coords[0][1], coords[1][1]);
+
+    var invalid = false;
+
+    for (var y = startY; y < endY; y++)
+    {
+        for (var x = startX; x < endX; x++)
+        {
+            if (grid[y][x] == '.')
+            {
+                invalid = true;
+                break;
+            }
+        }
+
+        if (invalid)
+        {
+            break;
+        }
+    }
+
+    if (!invalid)
+    {
+        result = (long)area.Item2;
+        break;
+    }
+}
+
+/*
+var biggest = ("", 0L);
+
+for (var i = 0; i < coordinates.Length; i++)
+{
+    for (var j = 0; j < coordinates.Length; j++)
+    {
+        if (i == j)
+        {
+            continue;
+        }
+
         var startX = Math.Min(coordinates[i][0], coordinates[j][0]);
         var endX = Math.Max(coordinates[i][0], coordinates[j][0]);
         var startY = Math.Min(coordinates[i][1], coordinates[j][1]);
         var endY = Math.Max(coordinates[i][1], coordinates[j][1]);
+
+        var area = (Math.Abs(coordinates[j][0] - coordinates[i][0]) + 1) * (Math.Abs(coordinates[j][1] - coordinates[i][1]) + 1);
+
+        if (area < biggest.Item2)
+        {
+            continue;
+        }
 
         var invalid = false;
 
@@ -108,15 +170,11 @@ for (var i = 0; i < coordinates.Length; i++)
 
         if (!invalid)
         {
-            var area = (Math.Abs(coordinates[j][0] - coordinates[i][0]) + 1) * (Math.Abs(coordinates[j][1] - coordinates[i][1]) + 1);
-
-            areas.Add(($"{string.Join(',', coordinates[i])}-{string.Join(',', coordinates[j])}", area));
+            biggest = ($"{string.Join(',', coordinates[i])}-{string.Join(',', coordinates[j])}", area);
         }
     }
 }
 
-areas = areas.OrderByDescending(d => d.Item2).ToList();
-
-result = (long)areas.First().Item2;
-
+result = biggest.Item2;
+*/
 Console.WriteLine(result);
