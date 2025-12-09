@@ -45,31 +45,79 @@ for (var i = 0; i < coordinates.Length; i++)
     }
 }
 
+var start = (0, 0);
+
 for (var i = 1; i < grid.Length; i++)
 {
     for (var j = 1; j < grid[i].Length; j++)
     {
         if (grid[i][j] != '.')
         {
-            continue; 
+            continue;
         }
 
         if ((grid[i - 1][j] != '.') && (grid[i][j - 1] != '.'))
         {
-            grid[i][j] = 'X';
+            start = (i, j);
+            break;
         }
+    }
+
+    if (start != (0, 0))
+    {
+        break;
     }
 }
 
-//for (var i = 0; i < grid.Length; i++)
-//{
-//    for (var j = 0; j < grid[i].Length; j++)
-//    {
-//        Console.Write(grid[i][j]);
-//    }
+var expand = new List<(int, int)>() { start };
 
-//    Console.WriteLine();
-//}
+while (expand.Any())
+{
+    Console.WriteLine($"To expand: {expand.Count}");
+
+    var newExpand = new List<(int, int)>();
+
+    foreach (var coordinate in expand)
+    {
+        if (grid[coordinate.Item1][coordinate.Item2] == '.')
+        {
+            grid[coordinate.Item1][coordinate.Item2] = 'X';
+
+            if ((coordinate.Item1 > 0) && (grid[coordinate.Item1 - 1][coordinate.Item2] == '.'))
+            {
+                newExpand.Add((coordinate.Item1 - 1, coordinate.Item2));
+            }
+
+            if ((coordinate.Item1 < maxY - 1) && (grid[coordinate.Item1 + 1][coordinate.Item2] == '.'))
+            {
+                newExpand.Add((coordinate.Item1 + 1, coordinate.Item2));
+            }
+
+            if ((coordinate.Item2 > 0) && (grid[coordinate.Item1][coordinate.Item2 - 1] == '.'))
+            {
+                newExpand.Add((coordinate.Item1, coordinate.Item2 - 1));
+            }
+
+            if ((coordinate.Item2 < maxX - 1) && (grid[coordinate.Item1][coordinate.Item2 + 1] == '.'))
+            {
+                newExpand.Add((coordinate.Item1, coordinate.Item2 + 1));
+            }
+        }
+    }
+
+    expand = newExpand.Distinct().ToList();
+}
+
+
+for (var i = 0; i < grid.Length; i++)
+{
+    for (var j = 0; j < grid[i].Length; j++)
+    {
+        Console.Write(grid[i][j]);
+    }
+
+    Console.WriteLine();
+}
 
 var areas = new List<(string, double)>();
 
@@ -134,56 +182,4 @@ while (areas.Count > 1)
 
 result = (long)areas.First().Item2;
 
-/*
-var biggest = ("", 0L);
-
-for (var i = 0; i < coordinates.Length; i++)
-{
-    for (var j = 0; j < coordinates.Length; j++)
-    {
-        if (i == j)
-        {
-            continue;
-        }
-
-        var startX = Math.Min(coordinates[i][0], coordinates[j][0]);
-        var endX = Math.Max(coordinates[i][0], coordinates[j][0]);
-        var startY = Math.Min(coordinates[i][1], coordinates[j][1]);
-        var endY = Math.Max(coordinates[i][1], coordinates[j][1]);
-
-        var area = (Math.Abs(coordinates[j][0] - coordinates[i][0]) + 1) * (Math.Abs(coordinates[j][1] - coordinates[i][1]) + 1);
-
-        if (area < biggest.Item2)
-        {
-            continue;
-        }
-
-        var invalid = false;
-
-        for (var y = startY; y < endY; y++)
-        {
-            for (var x = startX; x < endX; x++)
-            {
-                if (grid[y][x] == '.')
-                {
-                    invalid = true;
-                    break;
-                }
-            }
-
-            if (invalid)
-            {
-                break;
-            }
-        }
-
-        if (!invalid)
-        {
-            biggest = ($"{string.Join(',', coordinates[i])}-{string.Join(',', coordinates[j])}", area);
-        }
-    }
-}
-
-result = biggest.Item2;
-*/
 Console.WriteLine(result);
