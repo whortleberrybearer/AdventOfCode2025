@@ -90,8 +90,12 @@ for (var i = 0; i < coordinates.Length; i++)
 
 areas = areas.OrderByDescending(d => d.Item2).ToList();
 
-foreach (var area in areas)
+while (areas.Count > 1)
 {
+    Console.WriteLine($"Options: {areas.Count}");
+
+    var area = areas[(areas.Count - 1) / 2];
+
     var coords = area.Item1.Split('-').Select(a => a.Split(',').Select(c => long.Parse(c)).ToArray()).ToArray();
 
     var startX = Math.Min(coords[0][0], coords[1][0]);
@@ -120,10 +124,15 @@ foreach (var area in areas)
 
     if (!invalid)
     {
-        result = (long)area.Item2;
-        break;
+        areas.RemoveRange((areas.Count / 2) + 1, areas.Count - (areas.Count / 2) - 1);
+    }
+    else
+    {
+        areas.Remove(area);
     }
 }
+
+result = (long)areas.First().Item2;
 
 /*
 var biggest = ("", 0L);
