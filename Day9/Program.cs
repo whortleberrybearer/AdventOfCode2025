@@ -34,26 +34,16 @@ for (var i = 0; i < coordinates.Length; i++)
     var startY = Math.Min(current[1], next[1]);
     var endY = Math.Max(current[1], next[1]);
 
-    for (var j = startX + 1; j < endX; j++)
+    for (var j = startX; j <= endX; j++)
     {
         grid[startY][j] = 'X';
     }
 
-    for (var j = startY + 1; j < endY; j++)
+    for (var j = startY; j <= endY; j++)
     {
         grid[j][startX] = 'X';
     }
 }
-
-//for (var i = 0; i < grid.Length; i++)
-//{
-//    for (var j = 0; j < grid[i].Length; j++)
-//    {
-//        Console.Write(grid[i][j]);
-//    }
-
-//    Console.WriteLine();
-//}
 
 for (var i = 1; i < grid.Length; i++)
 {
@@ -71,11 +61,21 @@ for (var i = 1; i < grid.Length; i++)
     }
 }
 
+//for (var i = 0; i < grid.Length; i++)
+//{
+//    for (var j = 0; j < grid[i].Length; j++)
+//    {
+//        Console.Write(grid[i][j]);
+//    }
+
+//    Console.WriteLine();
+//}
+
 var areas = new List<(string, double)>();
 
 for (var i = 0; i < coordinates.Length; i++)
 {
-    for (var j = 0; j < coordinates.Length; j++)
+    for (var j = i + 1; j < coordinates.Length; j++)
     {
         if (i == j)
         {
@@ -105,9 +105,9 @@ while (areas.Count > 1)
 
     var invalid = false;
 
-    for (var y = startY; y < endY; y++)
+    for (var y = startY; y <= endY; y++)
     {
-        for (var x = startX; x < endX; x++)
+        for (var x = startX; x <= endX; x++)
         {
             if (grid[y][x] == '.')
             {
