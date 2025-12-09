@@ -40,11 +40,11 @@ distances = distances.OrderBy(d => d.Item2).ToList();
 var circuits = input.Select(i => new List<string>() { i }).ToList();
 var connections = 0;
 
-foreach (var distance in distances)
+for (var i = 0; i < 2000; i += 2)
 {
     Console.WriteLine($"Connections: {connections}");
 
-    var junctionBoxes = distance.Item1.Split('-');
+    var junctionBoxes = distances[i].Item1.Split('-');
 
     var circuit1 = circuits.FirstOrDefault(c => c.Contains(junctionBoxes[0]));
     var circuit2 = circuits.FirstOrDefault(c => c.Contains(junctionBoxes[1]));
@@ -59,12 +59,12 @@ foreach (var distance in distances)
         circuit1.AddRange(circuit2);
         circuits.Remove(circuit2);
 
-        connections++;
+        //connections++;
 
-        if (connections == 9)
-        {
-            break;
-        }
+        //if (connections == 999)
+        //{
+        //    break;
+        //}
     }
 
     //foreach (var additionalDelete in distancesDictionary[junctionBoxes[1]].ToArray())
