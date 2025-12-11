@@ -41,6 +41,8 @@ class Device
 
         if (Outputs.Any(o => o.Name == "out"))
         {
+            Console.WriteLine($"{string.Join("->", previousDevices.Select(d => d.Name))}->{Name}->out");
+
             return 1;
         }
 
