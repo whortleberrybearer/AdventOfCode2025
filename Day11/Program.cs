@@ -23,10 +23,34 @@ foreach (var line in input)
     }    
 }
 
+result = devices["you"].FollowOutput(new List<Device>());
+
 Console.WriteLine(result);
 
 class Device
 {
     public string Name { get; set; }
     public List<Device> Outputs = new List<Device>();
+
+    internal long FollowOutput(List<Device> previousDevices)
+    {
+        if (previousDevices.Contains(this))
+        {
+            return 0;
+        }
+
+        if (Outputs.Any(o => o.Name == "out"))
+        {
+            return 1;
+        }
+
+        previousDevices = new List<Device>(previousDevices) { this };
+
+        return Outputs.Sum(o => o.FollowOutput(previousDevices));
+    }
+}
+
+class Expansion
+{
+    public Device Device { get; set; }
 }
